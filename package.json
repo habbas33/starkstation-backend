@@ -1,0 +1,28 @@
+{
+  "name": "starkstation-backend",
+  "version": "1.0.0",
+  "description": "Data collector for starkstation",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "Syed Haider Abbas",
+  "license": "ISC",
+  "dependencies": {
+    "dayjs": "^1.11.5",
+    "dotenv": "^16.0.2",
+    "ethers": "^5.7.0",
+    "express": "^4.18.1",
+    "hbs": "^4.2.0",
+    "mongodb": "^4.9.1",
+    "mongoose": "^6.6.0",
+    "node-cron": "^3.0.2",
+    "starknet": "^4.5.0",
+    "web3": "^1.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
