@@ -11,7 +11,7 @@ const {
 
 require('dotenv').config();
 
-const StarkBlock = require('../models/StarkBlock')
+const StarkBlock = require('../models/starkBlock')
 const { TO_ADDRESS_SN_MAINNET, FROM_ADDRESS_SN_MAINNET, L2_FEE_CONTRACT_ADDRESS } = require('../constants/globals')
 
 mongoose.connect('mongodb://127.0.0.1:27017/stark-station-api', err => {

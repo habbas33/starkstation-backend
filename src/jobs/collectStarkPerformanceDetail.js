@@ -79,7 +79,7 @@ const estimateEthTransferFee = async (account) =>{
 
 
 // corn job starts here
-cron.schedule('*/20 * * * * *', function() {
+cron.schedule('*/1 * * * *', function() {
     const account = useStarkNetAccount();
     const usdc_contract = new Contract(USDC_ABI, USDC_CONTRACT_ADDRESS_SN, provider);
     usdc_contract.connect(account);
