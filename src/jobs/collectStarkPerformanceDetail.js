@@ -159,6 +159,6 @@ cron.schedule('*/1 * * * *', function() {
 
     collect();
     
-    console.log('running a task every 5 minute',new Date());
+    console.log('running a task every minute',new Date());
   });
 

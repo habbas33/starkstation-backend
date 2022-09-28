@@ -19,7 +19,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/stark-station-api', err => {
     console.log('connected to MongoDB')
 })
 
-cron.schedule('*/1 * * * *', function() {
+cron.schedule('*/5 * * * *', function() {
     const web3 = new Web3(new Web3.providers.HttpProvider(NETHERMIND_ENDPOINT))
     const provider = new ethers.providers.JsonRpcProvider(NETHERMIND_ENDPOINT)
     const web3_infura = new Web3(new Web3.providers.HttpProvider(INFURA_ENDPOINT))
@@ -30,7 +30,7 @@ cron.schedule('*/1 * * * *', function() {
     const ethTransferCallData = {
         to: TO_ADDRESS_ETH_MAINNET,
         from: FROM_ADDRESS_ETH_MAINNET,
-        value: web3.utils.toWei(`${1}`, 'ether'),
+        value: web3.utils.toWei(`${100}`, 'wei'),
         gas: 50000
     }
     const collectFeeEstimate = async() =>{
@@ -86,7 +86,7 @@ cron.schedule('*/1 * * * *', function() {
             let ethPerformanceDetail = []
             const firstEthBlockInDb = await EthBlock.find().sort({number:1}).limit(1)
             const latestEthBlockInDb = await EthBlock.find().sort({number:-1}).limit(1)
-            const filterByHourFactor = 60*60 //60*60
+            const filterByHourFactor = 10*60 //60*60
             if (latestEthBlockInDb[0].timestamp > firstEthBlockInDb[0].timestamp+filterByHourFactor) {
                 const lastEthPerformanceEntryInDb = await EthPerformanceDetail.find().sort({timestamp:-1}).limit(1)
                 let ethBlocksInLastHour = []
