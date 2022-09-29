@@ -46,6 +46,7 @@ starkPerformanceDetailSchema.methods.toJSON = () => {
 }
 
 starkPerformanceDetailSchema.statics.getPerformanceDetail = async function (skip, limit, period, item) {
+    const _skip = skip?skip:0
     let detail = []
     let showItem = {
         _id: 0,
@@ -65,10 +66,10 @@ starkPerformanceDetailSchema.statics.getPerformanceDetail = async function (skip
     } else {
         showItem[item] = 1
     }
-    console.log(showItem)
-    const numberPeriod = Number(period.replace("h",""))
+    // console.log(showItem)
     if (starkAllowedPeriods.includes(period)) {
-        detail = await StarkPerformanceDetail.aggregate([
+        const numberPeriod = Number(period.replace("h",""))
+        const pipeline = [
             {
                 "$project": {
                     _id: 0,
@@ -140,18 +141,26 @@ starkPerformanceDetailSchema.statics.getPerformanceDetail = async function (skip
                 "$project": showItem
             },
             { "$sort": { "timestamp": -1 } },
-            { "$limit": skip + limit },
-            { "$skip": skip }
-        ]);
-    } 
-    if (item === 'all' || item === 'feeEstimate') {
-        for (let i= 0; i<detail.length; i++){
-            console.log(detail[i].avgTxnFee)
-            const avgTxnFee = detail[i].avgTxnFee.map((item)=> new BigNumber.from(item)).reduce((a,v)=> a.add(v)).div(BigNumber.from( detail[i].avgTxnFee.length))
-            console.log(avgTxnFee)   
-            detail[i].avgTxnFee = avgTxnFee;
+        ]
+
+        if (limit) {
+            pipeline.push({$limit: _skip + limit});
+            pipeline.push({"$skip": _skip});
+        } else {
+            pipeline.push({"$skip": _skip});
         }
-    }
+        detail = await StarkPerformanceDetail.aggregate(pipeline);
+
+        if (item === 'all' || item === 'feeEstimate') {
+            for (let i= 0; i<detail.length; i++){
+                // console.log(detail[i].avgTxnFee)
+                const avgTxnFee = detail[i].avgTxnFee.map((item)=> new BigNumber.from(item)).reduce((a,v)=> a.add(v)).div(BigNumber.from( detail[i].avgTxnFee.length))
+                // console.log(avgTxnFee)   
+                detail[i].avgTxnFee = avgTxnFee;
+            }
+        }
+    } 
+    
     return detail
 }
 

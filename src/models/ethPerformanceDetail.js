@@ -44,6 +44,7 @@ ethPerformanceDetailSchema.methods.toJSON = function () {
 }
 
 ethPerformanceDetailSchema.statics.getPerformanceDetail = async function (skip, limit, period, item) {
+    const _skip = skip?skip:0
     let detail = []
     let showItem = {
         _id: 0,
@@ -66,9 +67,9 @@ ethPerformanceDetailSchema.statics.getPerformanceDetail = async function (skip, 
         showItem[item] = 1
     }
 
-    const numberPeriod = Number(period.replace("h",""))
     if (ethAllowedPeriods.includes(period)) {
-        detail = await EthPerformanceDetail.aggregate([
+        const numberPeriod = Number(period.replace("h",""))
+        const pipeline = [
             {
                 "$project": {
                     _id: 0,
@@ -143,23 +144,30 @@ ethPerformanceDetailSchema.statics.getPerformanceDetail = async function (skip, 
                 "$project": showItem
             },
             { "$sort": { "timestamp": -1 } },
-            { "$limit": skip + limit },
-            { "$skip": skip }
-        ]);
-    } 
-    if (item === 'all' || item === 'feeEstimate') {
-        for (let i= 0; i<detail.length; i++){
-            const avgTxnFee = detail[i].avgTxnFee.map((item)=> BigNumber.from(item)).reduce((a,v)=> a.add(v)).div(BigNumber.from( detail[i].avgTxnFee.length))
-            const avgBurntFee = detail[i].avgBurntFee.map((item)=> BigNumber.from(item)).reduce((a,v)=> a.add(v)).div(BigNumber.from( detail[i].avgBurntFee.length))
-            
-            detail[i].avgTxnFee = avgTxnFee;
-            detail[i].avgBurntFee = avgBurntFee;
+        ]
+
+        if (limit) {
+            pipeline.push({$limit: _skip + limit});
+            pipeline.push({"$skip": _skip});
+        } else {
+            pipeline.push({"$skip": _skip});
         }
-    }
+
+        detail = await EthPerformanceDetail.aggregate(pipeline);
+
+        if (item === 'all' || item === 'feeEstimate') {
+            for (let i= 0; i<detail.length; i++){
+                const avgTxnFee = detail[i].avgTxnFee.map((item)=> BigNumber.from(item)).reduce((a,v)=> a.add(v)).div(BigNumber.from( detail[i].avgTxnFee.length))
+                const avgBurntFee = detail[i].avgBurntFee.map((item)=> BigNumber.from(item)).reduce((a,v)=> a.add(v)).div(BigNumber.from( detail[i].avgBurntFee.length))
+                
+                detail[i].avgTxnFee = avgTxnFee;
+                detail[i].avgBurntFee = avgBurntFee;
+            }
+        }
+    } 
+
     return detail
 }
-
-
 
 const EthPerformanceDetail = mongoose.model('EthPerformanceDetail', ethPerformanceDetailSchema)
 

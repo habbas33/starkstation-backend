@@ -17,6 +17,8 @@ router.get('/stark/detail', async (req, res) => {
 router.get('/stark/blockLatency', async (req, res) => {
     try {
         const {skip, limit, period} = req.query;
+        console.log(skip)
+        console.log(limit)
         const starkPerformanceDetail = await StarkPerformanceDetail.getPerformanceDetail(Number(skip), Number(limit), period, "blockLatency")
         res.send(starkPerformanceDetail)
     } catch (e) {
