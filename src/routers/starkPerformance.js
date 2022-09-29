@@ -7,7 +7,13 @@ const router = new express.Router()
 router.get('/stark/detail', async (req, res) => {
     try {
         const {skip, limit, period} = req.query;
-        const starkPerformanceDetail = await StarkPerformanceDetail.getPerformanceDetail(Number(skip), Number(limit), period, "all")
+        let starkPerformanceDetail = []
+        if (period){
+            starkPerformanceDetail = await StarkPerformanceDetail.getPerformanceDetail(Number(skip), Number(limit), period, "all")
+        } else {
+            starkPerformanceDetail = await StarkPerformanceDetail.getBlockDetail(Number(skip), Number(limit))
+        }
+        
         res.send(starkPerformanceDetail)
     } catch (e) {
         res.status(500).send()

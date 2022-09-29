@@ -24,18 +24,10 @@ app.set('views', viewsPath)
 app.set('view engine', 'hbs')
 
 
-// app.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     next();
-// });
-
 app.listen(port, () => {
     console.log('Server is up on port ' + port)
 })
 
-const main = async () => {
-
-}
+const main = async () => {}
 
 main()
