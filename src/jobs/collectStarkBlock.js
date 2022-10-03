@@ -52,7 +52,7 @@ const estimateEthTransferFee = async (account) =>{
 
 // get total fee for all transactions in a block
 const getTxnsFee = async (block, provider) =>{
-    const txnsInBatch = 10;
+    const txnsInBatch = 5;
     let txBatchArray = []
     console.log("Total Txns = ", block.transactions.length)
     for (let tx=0; tx < block.transactions.length/txnsInBatch; tx++){
@@ -67,6 +67,9 @@ const getTxnsFee = async (block, provider) =>{
                 return result
             })
         )
+        await new Promise(r => setTimeout(r, 1000));
+        console.log("tx-",tx)
+        // console.log("txReceipts-",txReceipts)
         const fee_array = txReceipts.map((tx)=> Number(tx.actual_fee))
         feeArray = fee_array.concat(feeArray)
     }
@@ -76,7 +79,7 @@ const getTxnsFee = async (block, provider) =>{
 
 const provider = new Provider({sequencer: { network: 'mainnet-alpha' } })
 
-cron.schedule('*/1 * * * *', function() {
+cron.schedule('*/5 * * * *', function() {
     const account = useStarkNetAccount();
     const collectFeeDetail = async(block) =>{
         try {
